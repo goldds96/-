@@ -1,6 +1,6 @@
 import subprocess as sp
 
-def find_binares(path):
+def find_binaries(path):
   """
   Gets a list of possible binaries within a firmware sample.
 
