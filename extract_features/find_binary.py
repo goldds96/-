@@ -11,7 +11,7 @@ def find_binares(path):
   list : a list of binaries
   """
 
-  cmd = f"find '{fw_path}' -executable -type f -exec file {{}} \; | " \
+  cmd = f"find '{path}' -executable -type f -exec file {{}} \; | " \
           f"grep -iv image | grep -iv text | awk -F':' '{{print $1}}'"
   p = sp.Popen(cmd, stdout=sp.PIPE, stderr=sp.PIPE, shell=True)
   o, e = p.communicate()
