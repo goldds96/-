@@ -17,7 +17,7 @@ def find_binaries(path):
   o, e = p.communicate()
   if o:
     # changed to o.decode() for python3
-    return o.decode().split('\n'
+    return o.decode().split('\n')
 
   # Null
   return []
