@@ -1,6 +1,6 @@
 import subprocess as sp
 
-def find_binaries(path):
+def find_binaries(fw_path):
   """
   Gets a list of possible binaries within a firmware sample.
 
@@ -10,9 +10,9 @@ def find_binaries(path):
   [Return]
   list : a list of binaries
   """
-
-  cmd = f"find '{path}' -executable -type f -exec file {{}} \; | " \
-          f"grep -iv image | grep -iv text | awk -F':' '{{print $1}}'"
+  
+  cmd = f"find '{fw_path}' -executable -type f -exec file {{}} \; | " \
+        f"grep -iv image | grep -iv text | awk -F':' '{{print $1}}'"
   p = sp.Popen(cmd, stdout=sp.PIPE, stderr=sp.PIPE, shell=True)
   o, e = p.communicate()
   if o:
