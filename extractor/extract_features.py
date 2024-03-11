@@ -64,7 +64,7 @@ def find_all_binaries(unpack_directory):
               binaries.append(file)
               
   return binaries
-
+  
 def add_columns_csv(name, contents, csv_file_path):
   """
   csv 파일에 contents의 내용을 name이라는 이름의 열로 추가
