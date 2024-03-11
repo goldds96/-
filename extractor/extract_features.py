@@ -63,6 +63,9 @@ def find_all_binaries(unpack_directory):
             if 'ELF' in file_type and 'executable' in file_type:
               binaries.append(file)
               
+          except subprocess.CalledProcessError as e:
+            pass
+            
   return binaries
   
 def add_columns_csv(name, contents, csv_file_path):
