@@ -48,7 +48,6 @@ def find_all_binaries(unpack_directory):
   """
   
   binaries = []
-
   # 언패킹된 루트 디렉토리 순회
   for unpacked_fw in os.lilstdir(unpack_directory):
     unpack_path = os.path.join(unpack_directory, unpacked_fw)
@@ -63,8 +62,8 @@ def find_all_binaries(unpack_directory):
             file_type = subprocess.check_output(['file', '-b', full_path]).decode()
             if 'ELF' in file_type and 'executable' in file_type:
               binaries.append(file)
-  
-    return binaries
+              
+  return binaries
 
 def add_columns_csv(name, contents, csv_file_path):
   """
