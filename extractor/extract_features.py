@@ -2,6 +2,8 @@ import subprocess
 import os
 import csv
 
+MAX_THTREADS = 4
+
 # 펌웨어 이미지들이 모여있는 경로 (MODIFY)
 fw_directory = os.getcwd()
 
