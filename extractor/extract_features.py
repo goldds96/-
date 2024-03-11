@@ -109,5 +109,5 @@ def extract_features_thread(b, bins=None):
 if __name__ == '__main__':
   
   firmware_unpacking(fw_directory)
-  binaries = find_all_binaries(unpacked_directory)
+  binaries = find_all_binaries(unpack_directory)
   add_columns_csv('Binary Name', binaries, csv_file_path)
