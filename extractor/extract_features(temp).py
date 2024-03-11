@@ -1,6 +1,11 @@
 import subprocess
 import os
 import csv
+import logging
+from multiprocessing import Pool
+
+import angr
+
 
 MAX_THTREADS = 4
 
@@ -12,6 +17,24 @@ unpack_directory = os.path.join(os.getcwd(), 'unpack')
 
 # csv 파일을 저장할 경로
 csv_file_path = os.path.join(os.getcwd(), 'binaries.csv')
+
+# feature 추출 함수
+def extract_features()
+
+# feature 추출 (멀티스레드)
+def extract_features_thread(b, bins=None):
+  """
+  Binary 리스트 안의 Binary들로부터 Feature들을 추출하는 함수
+
+  [Params]
+  b: binary
+  bin: binaries (펌웨어 샘플 내의 모든 바이너리를 고려하려면 None으로 남김)
+
+  [Return]
+  None.
+  """
+  
+
 
 # 펌웨어 파일 언패킹
 for fw in os.listdir(fw_directory):
@@ -38,8 +61,6 @@ for unpacked_fw in os.listdir(unpack_directory):
 
         except subprocess.CalledProcessError as e:
           pass
-
-#csv_file_path = os.path.join(os.getcwd(), 'binaries.csv')
 
 # CSV 파일에 바이너리 추가
 with open(csv_file_path, 'a', newline='') as csvfile:
