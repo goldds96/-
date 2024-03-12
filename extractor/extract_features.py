@@ -69,6 +69,7 @@ def find_all_binaries(unpack_directory):
   return binaries
   
 def add_columns_csv(name, contents, csv_file_path):
+  
   """
   csv 파일에 contents의 내용을 name이라는 이름의 열로 추가
 
@@ -89,25 +90,62 @@ def add_columns_csv(name, contents, csv_file_path):
       writer.writerow([content])
 
 # feature 추출 함수
-def extract_features()
-
-# feature 추출 (멀티스레드)
-def extract_features_thread(b, bins=None):
+def extract_features(bins):
   """
   Binary 리스트 안의 Binary들로부터 Feature들을 추출하는 함수
 
   [Params]
-  b: binary
-  bin: binaries (펌웨어 샘플 내의 모든 바이너리를 고려하려면 None으로 남김)
+  bin: binaries
 
   [Return]
   None
   
   """
-  return
+  process_pool = Pool(MAX_THREADS)
+  func = partial(extract_features_thread, bins=bins)
+  output = process_pool.map(func, bins)
+  process_pool.clone()
+  process_pool.join()
+
+# feature 추출 (멀티스레드 사용)
+def extract_features_thread(bins):
+  """
+  Binary 리스트 안의 Binary들로부터 Feature들을 추출하는 함수
+
+  [Params]
+  bin: binaries
+
+  [Return]
+  tot_bb(list): 바이너리들의 basic block 개수
+  
+  """
+  tot_bb = []
+  
+  for b in bins:
+    log.info(f"Binary: {os.path.basename(b)}")
+
+    try:
+      p = angr.Projects(b, auto_load_libs=False)  
+    except Exception as e:
+      log.error(f"Failed to load binary {b}: {e}")
+      tot_bb.append("Fail")
+      continue
+
+    try:
+      cfg = p.analyses.CFG()
+      num_bb = len(cfg.model.nodes())
+      tot_bb.append(num_bb) 
+    except Exception as e:
+      log.error(f"Failed to generate CFG for binary {b}: {e}")
+      tot_bb.append(0)
+      continue
+      
+  return tot_bb  
 
 if __name__ == '__main__':
   
   firmware_unpacking(fw_directory)
   binaries = find_all_binaries(unpack_directory)
   add_columns_csv('Binary Name', binaries, csv_file_path)
+  tot_bb_list = extract_features(binaries)
+  add_columns_csv('Num of BB', tot_bb_list, csv_file_path)
