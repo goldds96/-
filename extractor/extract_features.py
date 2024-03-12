@@ -3,6 +3,7 @@ import os
 import csv
 import logging
 from multiprocessing import Pool
+from functool import partial
 
 import angr
 
