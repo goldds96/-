@@ -7,7 +7,7 @@ from multiprocessing import Pool
 import angr
 
 
-MAX_THTREADS = 4
+MAX_THREADS = 4
 
 # 펌웨어 이미지들이 모여있는 경로 (MODIFY)
 fw_directory = os.getcwd()
