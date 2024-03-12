@@ -7,7 +7,6 @@ from functools import partial
 
 import angr
 
-
 MAX_THREADS = 4
 
 # 펌웨어 이미지들이 모여있는 경로 (MODIFY)
@@ -95,39 +94,78 @@ def add_columns_csv(name, contents, csv_file_path):
       writer.writerow([content])
 
 # feature 추출
-def extract_features(bins):
+#def extract_features(bins):
+#  """
+#  Binary 리스트 안의 Binary들로부터 Feature들을 추출하는 함수
+#
+#  [Params]
+#  bin: binaries
+#
+#  [Return]
+#  tot_bb(list): 바이너리들의 basic block 개수
+#  
+#  """
+#  tot_bb = []
+#  
+#  for b in bins:
+#    logging.info(f"Binary: {os.path.basename(b)}")
+#
+#    try:
+#      p = angr.Project(b, auto_load_libs=False)  
+#    except Exception as e:
+#      logging.error(f"Failed to load binary {b}: {e}")
+#      tot_bb.append("Fail")
+#      continue
+#
+#    try:
+#      cfg = p.analyses.CFG()
+#      num_bb = len(cfg.model.nodes())
+#      tot_bb.append(num_bb) 
+#    except Exception as e:
+#      logging.error(f"Failed to generate CFG for binary {b}: {e}")
+#      tot_bb.append(0)
+#      continue
+#      
+#  return tot_bb  
+
+# feature 추출
+def extract_features(function, p, cfg):
   """
-  Binary 리스트 안의 Binary들로부터 Feature들을 추출하는 함수
+  basic block의 개수, 메모리 비교 연산의 개수, branch의 개수를 반환하는 함수
 
   [Params]
-  bin: binaries
+  function: angr function
+  p: angr project
+  cfg: control-flow graph
 
   [Return]
-  tot_bb(list): 바이너리들의 basic block 개수
+  n_blocks(int): number of basic blocks
+  n_memcmp(int): number of memory comparisons
+  n_branches(int): number of branches
   
   """
-  tot_bb = []
-  
-  for b in bins:
-    logging.info(f"Binary: {os.path.basename(b)}")
+
+  n_blocks = 0
+  n_memcmp = 0
+  n_branches = 0
+  strings = []
+
+  for block_addr in function.block_addrs:
+    n_blocks += 1
 
     try:
-      p = angr.Project(b, auto_load_libs=False)  
-    except Exception as e:
-      logging.error(f"Failed to load binary {b}: {e}")
-      tot_bb.append("Fail")
+      bb_block = p.factory.block(block_addr)
+      cfg_node = cfg.model.get_any_node(block_addr)
+      succs = cfg_node.successors
+    except:
       continue
 
-    try:
-      cfg = p.analyses.CFG()
-      num_bb = len(cfg.model.nodes())
-      tot_bb.append(num_bb) 
-    except Exception as e:
-      logging.error(f"Failed to generate CFG for binary {b}: {e}")
-      tot_bb.append(0)
+    # 분기문이 아닌 경우
+    if not succs:
       continue
+
+    if bb_block.vex.jumpkind == 'Ijk_Call':
       
-  return tot_bb  
 
 if __name__ == '__main__':
   
