@@ -102,11 +102,10 @@ def extract_features(bins):
   None
   
   """
-  process_pool = Pool(MAX_THREADS)
-  func = partial(extract_features_thread, bins=bins)
-  output = process_pool.map(func, bins)
-  process_pool.clone()
-  process_pool.join()
+  with Pool(MAX_THREADS) as process_pool:
+    output = process_pool.map(extract_features_thread, bins_
+    process_pool.clone()
+    process_pool.join()
 
 # feature 추출 (멀티스레드 사용)
 def extract_features_thread(bins):
