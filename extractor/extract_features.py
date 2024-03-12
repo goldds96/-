@@ -46,9 +46,12 @@ def find_all_binaries(unpack_directory):
 
   [Return]
   binaries(list): 각 펌웨어 샘플들의 모든 바이너리 집합
+  paths(list): 바이너리의 경로
   """
   
   binaries = []
+  paths = []
+  
   # 언패킹된 루트 디렉토리 순회
   for unpacked_fw in os.listdir(unpack_directory):
     unpack_path = os.path.join(unpack_directory, unpacked_fw)
@@ -63,11 +66,12 @@ def find_all_binaries(unpack_directory):
             file_type = subprocess.check_output(['file', '-b', full_path]).decode()
             if 'ELF' in file_type and 'executable' in file_type:
               binaries.append(file)
+              paths.append(full_path)
               
           except subprocess.CalledProcessError as e:
             pass
             
-  return binaries
+  return binaries, paths
   
 def add_columns_csv(name, contents, csv_file_path):
   
@@ -90,25 +94,8 @@ def add_columns_csv(name, contents, csv_file_path):
     for content in contents:
       writer.writerow([content])
 
-# feature 추출 함수
+# feature 추출
 def extract_features(bins):
-  """
-  Binary 리스트 안의 Binary들로부터 Feature들을 추출하는 함수
-
-  [Params]
-  bin: binaries
-
-  [Return]
-  None
-  
-  """
-  with Pool(MAX_THREADS) as process_pool:
-    output = process_pool.map(extract_features_thread, bins_
-    process_pool.clone()
-    process_pool.join()
-
-# feature 추출 (멀티스레드 사용)
-def extract_features_thread(bins):
   """
   Binary 리스트 안의 Binary들로부터 Feature들을 추출하는 함수
 
@@ -122,12 +109,12 @@ def extract_features_thread(bins):
   tot_bb = []
   
   for b in bins:
-    log.info(f"Binary: {os.path.basename(b)}")
+    logging.info(f"Binary: {os.path.basename(b)}")
 
     try:
-      p = angr.Projects(b, auto_load_libs=False)  
+      p = angr.Project(b, auto_load_libs=False)  
     except Exception as e:
-      log.error(f"Failed to load binary {b}: {e}")
+      logging.error(f"Failed to load binary {b}: {e}")
       tot_bb.append("Fail")
       continue
 
@@ -136,7 +123,7 @@ def extract_features_thread(bins):
       num_bb = len(cfg.model.nodes())
       tot_bb.append(num_bb) 
     except Exception as e:
-      log.error(f"Failed to generate CFG for binary {b}: {e}")
+      logging.error(f"Failed to generate CFG for binary {b}: {e}")
       tot_bb.append(0)
       continue
       
@@ -145,7 +132,7 @@ def extract_features_thread(bins):
 if __name__ == '__main__':
   
   firmware_unpacking(fw_directory)
-  binaries = find_all_binaries(unpack_directory)
+  binaries, paths = find_all_binaries(unpack_directory)
   add_columns_csv('Binary Name', binaries, csv_file_path)
-  tot_bb_list = extract_features(binaries)
+  tot_bb_list = extract_features(paths)
   add_columns_csv('Num of BB', tot_bb_list, csv_file_path)
