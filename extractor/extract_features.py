@@ -49,7 +49,7 @@ def find_all_binaries(unpack_directory):
   
   binaries = []
   # 언패킹된 루트 디렉토리 순회
-  for unpacked_fw in os.lilstdir(unpack_directory):
+  for unpacked_fw in os.listdir(unpack_directory):
     unpack_path = os.path.join(unpack_directory, unpacked_fw)
     if os.path.isdir(unpack_path):
       for root, dirs, files in os.walk(unpack_path):
