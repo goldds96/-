@@ -93,43 +93,6 @@ def add_columns_csv(name, contents, csv_file_path):
     for content in contents:
       writer.writerow([content])
       
-def add_columns_csv_new(name, contents, csv_file_path):
-    """
-    CSV 파일에 contents의 내용을 name이라는 이름의 열로 추가
-    
-    [Params]
-    name: 추가할 열의 이름
-    contents: csv 파일에 추가할 내용
-    csv_file_path: 수정할 csv 파일의 경로
-    
-    [Returns]
-    None
-    """
-    
-    # 기존 CSV 파일을 읽고 모든 데이터를 저장
-    rows = []
-    with open(csv_file_path, 'r', newline='') as csvfile:
-        reader = csv.reader(csvfile)
-        rows = [row for row in reader]
-    
-    # 열의 이름을 첫 번째 행에 추가
-    if len(rows) > 0:
-        rows[0].append(name)
-    
-    # 새로운 열의 내용을 추가
-    for i, content in enumerate(contents, start=1):
-        # 이미 존재하는 행에 내용 추가
-        if i < len(rows):
-            rows[i].append(content)
-        # 새로운 행이 필요한 경우 (contents가 기존 행보다 많은 경우)
-        else:
-            rows.append([''] * (len(rows[0]) - 1) + [content])  # 이전 열들은 비워두고 새 내용 추가
-    
-    # 수정된 데이터로 CSV 파일 덮어쓰기
-    with open(csv_file_path, 'w', newline='') as csvfile:
-        writer = csv.writer(csvfile)
-        writer.writerows(rows)
-
 # feature 추출
 #def extract_features(bins):
 #  """
